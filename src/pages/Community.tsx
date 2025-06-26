@@ -2,21 +2,20 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Users, 
-  MessageCircle, 
   ThumbsUp, 
-  Award,
+  MessageCircle, 
   TrendingUp,
-  Search,
+  Award,
   Share2,
   Bookmark,
-  MoreVertical
+  Hash,
+  Plus
 } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Avatar, AvatarFallback } from '../components/ui/avatar'
-import { Input } from '../components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
 
 const discussions = [
   {
@@ -29,58 +28,52 @@ const discussions = [
     likes: 34,
     comments: 12,
     time: '2 hours ago',
-    trending: true
+    tags: ['saas', 'pricing', 'objections']
   },
   {
     id: 2,
-    author: 'Sarah Williams',
-    avatar: 'SW',
-    title: 'My cold email template that gets 42% response rate',
-    content: 'After testing dozens of variations, this template consistently outperforms. The key is personalization in the first line...',
-    category: 'Prospecting',
-    likes: 89,
+    author: 'Sarah Johnson',
+    avatar: 'SJ',
+    title: 'How I increased my cold call success rate by 40%',
+    content: 'The secret was in the opening line. Instead of asking for time, I started with a specific value prop...',
+    category: 'Cold Calling',
+    likes: 56,
     comments: 23,
     time: '5 hours ago',
-    trending: true
+    tags: ['coldcalling', 'prospecting', 'tips']
   },
   {
     id: 3,
     author: 'David Park',
     avatar: 'DP',
-    title: 'Closing deals faster with the 2-call close method',
-    content: "Instead of the traditional 3-4 call process, I've developed a framework that helps close deals in just 2 calls...",
-    category: 'Closing',
-    likes: 56,
-    comments: 18,
+    title: 'Enterprise deal closed: lessons learned',
+    content: 'Just closed a 6-figure enterprise deal after 8 months. Here are the key things that made the difference...',
+    category: 'Success Stories',
+    likes: 89,
+    comments: 31,
     time: '1 day ago',
-    trending: false
+    tags: ['enterprise', 'success', 'closing']
   }
 ]
 
 const topContributors = [
-  { name: 'Emma Thompson', points: 2340, badge: 'Elite', avatar: 'ET' },
-  { name: 'James Wilson', points: 1890, badge: 'Expert', avatar: 'JW' },
-  { name: 'Lisa Chen', points: 1650, badge: 'Expert', avatar: 'LC' },
-  { name: 'Robert Kumar', points: 1420, badge: 'Pro', avatar: 'RK' }
+  { name: 'Emma Wilson', points: 2450, badge: 'Expert', avatar: 'EW' },
+  { name: 'James Lee', points: 2280, badge: 'Expert', avatar: 'JL' },
+  { name: 'Lisa Zhang', points: 1950, badge: 'Advanced', avatar: 'LZ' },
+  { name: 'Tom Brown', points: 1720, badge: 'Advanced', avatar: 'TB' },
+  { name: 'Ana Garcia', points: 1450, badge: 'Intermediate', avatar: 'AG' }
 ]
 
-const upcomingEvents = [
-  {
-    title: 'Live Q&A: Enterprise Sales Strategies',
-    host: 'John Maxwell',
-    date: 'Tomorrow, 2:00 PM EST',
-    attendees: 156
-  },
-  {
-    title: 'Workshop: AI Tools for Sales',
-    host: 'Tech Sales Academy',
-    date: 'Friday, 3:00 PM EST',
-    attendees: 89
-  }
+const trendingTopics = [
+  { name: 'AI in Sales', posts: 45, growth: '+23%' },
+  { name: 'Remote Selling', posts: 38, growth: '+18%' },
+  { name: 'LinkedIn Strategies', posts: 32, growth: '+15%' },
+  { name: 'Email Templates', posts: 28, growth: '+12%' },
+  { name: 'Demo Best Practices', posts: 24, growth: '+10%' }
 ]
 
 export default function Community() {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [activeTab, setActiveTab] = useState('discussions')
 
   return (
     <div className="space-y-8">
@@ -91,7 +84,7 @@ export default function Community() {
       >
         <h1 className="text-4xl font-bold gradient-text">Sales Community</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Connect, share, and learn from top sales professionals worldwide
+          Connect with fellow sales professionals, share insights, and learn from real experiences
         </p>
       </motion.div>
 
@@ -99,20 +92,25 @@ export default function Community() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col sm:flex-row gap-4 items-center"
+        className="flex flex-col sm:flex-row gap-4 items-center justify-between"
       >
-        <div className="relative flex-1 w-full sm:max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            placeholder="Search discussions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
-          />
-        </div>
-        <Button className="bg-gradient-to-r from-purple-500 to-teal-500 text-white hover:from-purple-600 hover:to-teal-600">
-          <MessageCircle className="w-4 h-4 mr-2" />
-          Start Discussion
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+          <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm border border-purple-200 rounded-lg">
+            <TabsTrigger value="discussions" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-teal-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md">
+              Discussions
+            </TabsTrigger>
+            <TabsTrigger value="trending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-teal-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md">
+              Trending
+            </TabsTrigger>
+            <TabsTrigger value="leaderboard" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-teal-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md">
+              Leaderboard
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
+        <Button className="bg-gradient-to-r from-purple-500 to-teal-500 text-white shadow-md hover:from-purple-600 hover:to-teal-600">
+          <Plus className="w-4 h-4 mr-2" />
+          New Discussion
         </Button>
       </motion.div>
 
@@ -123,21 +121,8 @@ export default function Community() {
           transition={{ delay: 0.2 }}
           className="lg:col-span-2 space-y-6"
         >
-          <Tabs defaultValue="trending" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm border border-purple-200 rounded-lg">
-              <TabsTrigger value="trending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-teal-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Trending
-              </TabsTrigger>
-              <TabsTrigger value="recent" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-teal-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md">
-                Recent
-              </TabsTrigger>
-              <TabsTrigger value="following" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-teal-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md">
-                Following
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="trending" className="space-y-4">
+          {activeTab === 'discussions' && (
+            <div className="space-y-4">
               {discussions.map((discussion, index) => (
                 <motion.div
                   key={discussion.id}
@@ -147,79 +132,149 @@ export default function Community() {
                 >
                   <Card className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
                     <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <Avatar>
-                            <AvatarFallback className="bg-gradient-to-br from-purple-500 to-teal-500 text-white">
-                              {discussion.avatar}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium">{discussion.author}</p>
-                            <p className="text-sm text-muted-foreground">{discussion.time}</p>
+                      <div className="flex items-start space-x-4">
+                        <Avatar className="w-10 h-10">
+                          <AvatarFallback className="bg-gradient-to-br from-purple-500 to-teal-500 text-white">
+                            {discussion.avatar}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div className="space-y-1">
+                              <h3 className="font-semibold text-lg hover:text-purple-600 cursor-pointer transition-colors">
+                                {discussion.title}
+                              </h3>
+                              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                                <span>{discussion.author}</span>
+                                <span>•</span>
+                                <span>{discussion.time}</span>
+                                <span>•</span>
+                                <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-800">
+                                  {discussion.category}
+                                </Badge>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-purple-600">
+                              <Bookmark className="w-4 h-4" />
+                            </Button>
                           </div>
-                        </div>
-                        {discussion.trending && (
-                          <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                            <TrendingUp className="w-3 h-3 mr-1" />
-                            Trending
-                          </Badge>
-                        )}
-                      </div>
-
-                      <h3 className="text-lg font-semibold mb-2">{discussion.title}</h3>
-                      <p className="text-muted-foreground mb-4 line-clamp-2">{discussion.content}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <Badge variant="outline" className="border-purple-200 text-purple-600">
-                            {discussion.category}
-                          </Badge>
-                          <button className="flex items-center space-x-1 text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                            <ThumbsUp className="w-4 h-4" />
-                            <span>{discussion.likes}</span>
-                          </button>
-                          <button className="flex items-center space-x-1 text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                            <MessageCircle className="w-4 h-4" />
-                            <span>{discussion.comments}</span>
-                          </button>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <Share2 className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <Bookmark className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
+                          
+                          <p className="text-gray-600 line-clamp-2">
+                            {discussion.content}
+                          </p>
+                          
+                          <div className="flex items-center justify-between pt-2">
+                            <div className="flex items-center space-x-4 text-sm">
+                              <button className="flex items-center space-x-1 text-gray-500 hover:text-purple-600 transition-colors">
+                                <ThumbsUp className="w-4 h-4" />
+                                <span>{discussion.likes}</span>
+                              </button>
+                              <button className="flex items-center space-x-1 text-gray-500 hover:text-teal-600 transition-colors">
+                                <MessageCircle className="w-4 h-4" />
+                                <span>{discussion.comments}</span>
+                              </button>
+                              <button className="flex items-center space-x-1 text-gray-500 hover:text-purple-600 transition-colors">
+                                <Share2 className="w-4 h-4" />
+                                <span>Share</span>
+                              </button>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              {discussion.tags.map((tag) => (
+                                <Badge key={tag} variant="outline" className="text-xs border-teal-200 text-teal-700">
+                                  <Hash className="w-3 h-3 mr-1" />
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
-            </TabsContent>
+            </div>
+          )}
 
-            <TabsContent value="recent" className="space-y-4">
-              <Card className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0">
-                <CardContent className="p-8 text-center">
-                  <Users className="w-12 h-12 text-purple-300 mx-auto mb-4" />
-                  <p className="text-muted-foreground">Recent discussions will appear here</p>
-                </CardContent>
-              </Card>
-            </TabsContent>
+          {activeTab === 'trending' && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              {trendingTopics.map((topic, index) => (
+                <motion.div
+                  key={topic.name}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                >
+                  <Card className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-lg">{topic.name}</h4>
+                          <p className="text-sm text-muted-foreground">{topic.posts} posts this week</p>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant="secondary" className="bg-teal-100 text-teal-800">
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                            {topic.growth}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
 
-            <TabsContent value="following" className="space-y-4">
-              <Card className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0">
-                <CardContent className="p-8 text-center">
-                  <Users className="w-12 h-12 text-purple-300 mx-auto mb-4" />
-                  <p className="text-muted-foreground">Follow members to see their discussions here</p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          {activeTab === 'leaderboard' && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-4"
+            >
+              {topContributors.map((contributor, index) => (
+                <motion.div
+                  key={contributor.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                >
+                  <Card className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-purple-500 to-teal-500 text-white rounded-full font-bold">
+                            {index + 1}
+                          </div>
+                          <Avatar className="w-10 h-10">
+                            <AvatarFallback className="bg-gradient-to-br from-purple-400 to-teal-400 text-white">
+                              {contributor.avatar}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="font-semibold">{contributor.name}</h4>
+                            <Badge variant="outline" className="text-xs border-purple-200 text-purple-600">
+                              {contributor.badge}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-purple-600">{contributor.points}</p>
+                          <p className="text-xs text-muted-foreground">points</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </motion.div>
 
         <motion.div 
@@ -231,69 +286,66 @@ export default function Community() {
           <Card className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Award className="w-5 h-5 text-yellow-500" />
-                <span>Top Contributors</span>
+                <Users className="w-5 h-5 text-purple-600" />
+                <span>Community Stats</span>
               </CardTitle>
-              <CardDescription>This month's most helpful members</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {topContributors.map((contributor, index) => (
-                <motion.div
-                  key={contributor.name}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-teal-500 text-white text-xs">
-                        {contributor.avatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium text-sm">{contributor.name}</p>
-                      <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-800">
-                        {contributor.badge}
-                      </Badge>
-                    </div>
-                  </div>
-                  <p className="text-sm font-medium text-teal-600">{contributor.points} pts</p>
-                </motion.div>
-              ))}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Active Members</span>
+                  <span className="font-bold text-lg">1,284</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Discussions Today</span>
+                  <span className="font-bold text-lg">45</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Solutions Shared</span>
+                  <span className="font-bold text-lg">892</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Avg Response Time</span>
+                  <span className="font-bold text-lg">23m</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
           <Card className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Users className="w-5 h-5 text-purple-600" />
-                <span>Upcoming Events</span>
+                <Award className="w-5 h-5 text-teal-600" />
+                <span>Your Contribution</span>
               </CardTitle>
-              <CardDescription>Join live sessions with experts</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {upcomingEvents.map((event, index) => (
-                <motion.div
-                  key={event.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  className="space-y-2 p-3 rounded-lg border border-dashed border-purple-200 hover:border-purple-300 transition-colors"
-                >
-                  <h4 className="font-medium text-sm">{event.title}</h4>
-                  <p className="text-xs text-muted-foreground">Hosted by {event.host}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-orange-600">{event.date}</span>
-                    <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-800">
-                      {event.attendees} attending
-                    </Badge>
-                  </div>
-                  <Button size="sm" variant="outline" className="w-full border-purple-200 hover:bg-purple-100/50 text-xs">
-                    Register
-                  </Button>
-                </motion.div>
-              ))}
+              <div className="text-center space-y-2">
+                <div className="text-3xl font-bold text-purple-600">450</div>
+                <div className="text-sm text-muted-foreground">Community Points</div>
+                <Badge variant="secondary" className="bg-teal-100 text-teal-800">
+                  Rising Star
+                </Badge>
+              </div>
+              
+              <div className="space-y-3 pt-4 border-t">
+                <div className="flex justify-between text-sm">
+                  <span>Posts Created</span>
+                  <span className="font-medium">12</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Solutions Provided</span>
+                  <span className="font-medium">8</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Likes Received</span>
+                  <span className="font-medium">124</span>
+                </div>
+              </div>
+              
+              <Button variant="outline" className="w-full border-purple-200 hover:bg-purple-100/50">
+                View Your Profile
+              </Button>
             </CardContent>
           </Card>
         </motion.div>
